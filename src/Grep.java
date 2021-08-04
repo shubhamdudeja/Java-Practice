@@ -11,7 +11,7 @@ public class Grep {
     private StringBuilder outText;
     private boolean inverseFlag;
     private List<String> fileNames;
-    private List<String> flags=new ArrayList<>(0);
+    private List<String> flags;
 
     public Grep(String command){
         this.command = new String(command);
