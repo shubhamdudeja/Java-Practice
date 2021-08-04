@@ -9,14 +9,16 @@ import java.util.regex.Pattern;
 public class Grep {
     private String command, text;
     private StringBuilder outText;
-    boolean inverseFlag;
-    private List<String> fileNames=new ArrayList<>(0);
+    private boolean inverseFlag;
+    private List<String> fileNames;
     private List<String> flags=new ArrayList<>(0);
 
     public Grep(String command){
         this.command = new String(command);
         outText = new StringBuilder("");
         inverseFlag = false;
+        fileNames = new ArrayList<>(0);
+        flags = new ArrayList<>(0);
         extractElements();
         printElements();
     }
@@ -28,7 +30,7 @@ public class Grep {
     }
 
     private void raiseException(){
-        System.out.println("Invalid Command!\n Command should be: \"grep -flag1 -flag2 ... \"text\" file1.ext file2.ext ...\n" +
+        System.out.println("Invalid Command!\nCommand should be: \n\"grep -flag1 -flag2 ... \"text\" file1.ext file2.ext ...\n" +
                 "Possible Reasons: file does not exist, wrong flags");
     }
 
@@ -43,7 +45,7 @@ public class Grep {
                 flags.add(el);
                 if(el.equals("-v")){
                     inverseFlag = true;
-                    System.out.println("!!! Inverse Flag activated");
+                    System.out.println("\n!!! Inverse Flag activated");
                 }
                 continue;
             }
@@ -56,8 +58,13 @@ public class Grep {
             }
             tempText.append(el).append(" ");
         }
-        text = tempText.toString().substring(0, tempText.length()-1).replaceAll("\"", "");
-//        System.out.println(fileNames, flags, text);
+        try {
+            text = tempText.toString().substring(0, tempText.length() - 1).replaceAll("\"", "");
+        }
+        catch (Exception e){
+            raiseException();
+        }
+        //        System.out.println(fileNames, flags, text);
     }
 
 
@@ -66,7 +73,7 @@ public class Grep {
             File file = new File(fileNames.get(i));
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
-            outText.append("(Case Sensitive) Matching Text found in ").append(fileNames.get(i)).append(" at line: \n");
+            outText.append("\n(Case Sensitive) Matching Text found in ").append(fileNames.get(i)).append(" at line: \n");
             int line_no = 0;
             while ((st = br.readLine()) != null) {
                 line_no++;
@@ -85,7 +92,7 @@ public class Grep {
             File file = new File(fileNames.get(i));
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
-            outText.append("Matching Text found in ").append(fileNames.get(i)).append(" files: ");
+            outText.append("\nMatching Text (Entire Lines) found in ").append(fileNames.get(i)).append(" files: ");
             int flag = 0;
             while ((st = br.readLine()) != null){
                 if (Pattern.matches(".*"+text.toLowerCase()+".*", st.toLowerCase()) && !inverseFlag){
@@ -108,7 +115,7 @@ public class Grep {
             File file = new File(fileNames.get(i));
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
-            outText.append("(Case Insensitive) Matching Text found in ").append(fileNames.get(i)).append(" at line: \n");
+            outText.append("\n(Case Insensitive) Matching Text found in ").append(fileNames.get(i)).append(" at line: \n");
             int line_no = 0;
             while ((st = br.readLine()) != null) {
                 line_no++;
@@ -127,7 +134,7 @@ public class Grep {
             File file = new File(fileNames.get(i));
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
-            outText.append("Matching Text found in ").append(fileNames.get(i)).append(" at line: \n");
+            outText.append("\nMatching Text found in ").append(fileNames.get(i)).append(" at line: \n");
             int line_no = 0;
             while ((st = br.readLine()) != null) {
                 line_no++;
